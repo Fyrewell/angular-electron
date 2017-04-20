@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import * as childProcess from 'child_process';
 
+import * as serialport from 'serialport';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -11,6 +13,7 @@ export class AppComponent {
   title = `App works !`;
 
   constructor() {
+    console.log(serialport)
     // Check if electron is correctly injected (see externals in webpack.config.js)
     console.log('c', ipcRenderer);
     // Check if nodeJs childProcess is correctly injected (see externals in webpack.config.js)
