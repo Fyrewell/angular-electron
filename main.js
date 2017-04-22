@@ -10,7 +10,13 @@ const args = process.argv.slice(1);
 serve = args.some(val => val === "--serve");
 
 if (serve) {
-  require('electron-reload')(__dirname + '/dist');
+  require('electron-reload')(__dirname, {
+    electron: require('${__dirname}/../../node_modules/electron')
+  })
+  require('electron-context-menu')({
+  	prepend: (params, browserWindow) => [{
+  	}]
+  });
 }
 
 function createWindow() {
@@ -20,11 +26,11 @@ function createWindow() {
 
     // Create the browser window.
     win = new BrowserWindow({
-        x: 0,
-        y: 0,
-        width: size.width,
-        height: size.height
+        width: 1200,
+        height: 860,
+        icon: __dirname + '/favicon.ico'
     });
+    win.setMenu(null);
 
     let url = serve ?
       'file://' + __dirname + '/dist/index.html':

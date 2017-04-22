@@ -1,3 +1,18 @@
-<h1 class="title">
-  {{title}}
-</h1>
+<md-toolbar color="primary" style="position:fixed;top:0">
+<span>Smart Supermarket</span>
+</md-toolbar>
+<md-toolbar color="primary" class="mat-elevation-z6" style="position:fixed;top:56px;">
+
+<nav md-tab-nav-bar class="nav-bar mat-elevation-z0">
+  <a md-tab-link md-button
+     *ngFor="let link of navLinks"
+     [routerLink]="link.path">
+     <i class="material-icons">{{link.icon}}</i>
+     {{link.label}}
+  </a>
+</nav>
+</md-toolbar>
+
+<div class="container">
+    <router-outlet></router-outlet>
+</div>

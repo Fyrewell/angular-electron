@@ -27,20 +27,23 @@
     "pree2e": "webdriver-manager update --standalone false --gecko false --quiet",
     "electron:serve": "electron . --serve",
     "electron:dist": "npm run build && electron dist/main.js",
-    "electron:linux": "npm run build && copyfiles package.json dist && electron-packager dist --overwrite --platform=linux --arch=x64 --asar=true  --out=app-builds",
-    "electron:windows": "npm run build && copyfiles package.json dist && electron-packager dist --overwrite --platform=win32 --arch=ia32 --asar=true --out=app-builds",
-    "electron:mac": "npm run build && copyfiles package.json dist && electron-packager dist --overwrite --platform=darwin --arch=x64 --asar=true --out=app-builds"
+    "electron:linux": "npm run build && copyfiles package.json dist && electron-packager dist --overwrite --platform=linux --arch=x64 --asar=true  --out=app-builds --electron-version=1.4.16",
+    "electron:windows": "npm run build && copyfiles package.json dist && electron-packager dist --overwrite --platform=win32 --arch=x64 --asar=true --out=app-builds --electron-version=1.4.16",
+    "electron:mac": "npm run build && copyfiles package.json dist && electron-packager dist --overwrite --platform=darwin --arch=x64 --asar=true --out=app-builds --electron-version=1.4.16"
   },
   "dependencies": {
+    "@angular/animations": "^4.0.3",
     "@angular/common": "~4.0.2",
     "@angular/compiler": "~4.0.2",
     "@angular/core": "~4.0.2",
     "@angular/forms": "~4.0.2",
     "@angular/http": "~4.0.2",
+    "@angular/material": "^2.0.0-beta.3",
     "@angular/platform-browser": "~4.0.2",
     "@angular/platform-browser-dynamic": "~4.0.2",
     "@angular/router": "~4.0.2",
     "core-js": "~2.4.1",
+    "electron-context-menu": "^0.9.0",
     "rxjs": "~5.3.0",
     "serialport": "^4.0.7",
     "zone.js": "~0.8.5"
