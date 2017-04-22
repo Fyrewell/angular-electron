@@ -1,0 +1,26 @@
+<md-toolbar color="accent" style="padding-top:114px">
+  <p small>{{tituloOperacao}} Produto</p>
+  <div style="max-width:700px;margin:0 auto;">
+    <a md-fab routerLink="/produtos" color="warn" class="button_return">
+      <i class="material-icons">keyboard_return</i>
+    </a>
+  </div>
+</md-toolbar>
+<div style="max-width:700px;margin:0 auto;padding:20px">
+  <form class="example-form">
+      <md-input-container class="input">
+        <input mdInput #nome maxlength="5" placeholder="Nome" value="">
+      </md-input-container>
+      <md-input-container class="input">
+        <input mdInput #tag maxlength="10" placeholder="Tag" value="">
+        <md-hint align="end">{{tag.value.length}} / 10</md-hint>
+      </md-input-container>
+      <md-input-container class="input">
+        <input mdInput #nome placeholder="Preço" value="">
+      </md-input-container>
+      <button md-raised-button md-button routerLink=".">
+        Salvar
+        <i class="material-icons">done</i>
+    </button>
+  </form>
+</div>

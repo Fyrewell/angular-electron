@@ -5,18 +5,22 @@ import { HttpModule } from '@angular/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { InicialComponent } from './pages/inicial/inicial.component';
 
 import { AppRoutingModule } from './app.routing.module';
-import { PaginaNaoEncontradaComponent } from './pages/pagina-nao-encontrada/pagina-nao-encontrada.component';
+import { InicialComponent, ProdutosComponent, ProdutosDetalheComponent,
+ComprasComponent, ComprasDetalheComponent, PaginaNaoEncontradaComponent } from './pages';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdToolbarModule, MdTabsModule, MdButtonModule } from '@angular/material';
+import { MdToolbarModule, MdTabsModule, MdButtonModule, MdListModule, MdInputModule } from '@angular/material';
 
 @NgModule({
   declarations: [
     AppComponent,
     InicialComponent,
+    ProdutosComponent,
+    ProdutosDetalheComponent,
+    ComprasComponent,
+    ComprasDetalheComponent,
     PaginaNaoEncontradaComponent
   ],
   imports: [
@@ -27,7 +31,9 @@ import { MdToolbarModule, MdTabsModule, MdButtonModule } from '@angular/material
     BrowserAnimationsModule,
     MdToolbarModule,
     MdTabsModule,
-    MdButtonModule
+    MdButtonModule,
+    MdListModule,
+    MdInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]

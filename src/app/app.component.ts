@@ -16,8 +16,8 @@ export class AppComponent {
 
   navLinks = [
     { label: 'INICIO', path: '/inicial', icon: '' },
-    { label: 'PRODUTOS', path: '/produtos', icon: 'shopping_cart' },
-    { label: 'COMPRAS', path: '/compras', icon: 'shopping_basket' }
+    { label: 'PRODUTOS', path: '/produtos', icon: 'shopping_basket' },
+    { label: 'COMPRAS', path: '/compras', icon: 'shopping_cart' }
   ];
 
   constructor() {
