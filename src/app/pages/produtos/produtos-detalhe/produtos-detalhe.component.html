@@ -7,20 +7,24 @@
   </div>
 </md-toolbar>
 <div style="max-width:700px;margin:0 auto;padding:20px">
-  <form class="example-form">
+  <form (ngSubmit)="salvarProduto()">
       <md-input-container class="input">
-        <input mdInput #nome maxlength="5" placeholder="Nome" value="">
+        <input mdInput placeholder="#" disabled [(ngModel)]="id" [ngModelOptions]="{standalone: true}">
       </md-input-container>
       <md-input-container class="input">
-        <input mdInput #tag maxlength="10" placeholder="Tag" value="">
-        <md-hint align="end">{{tag.value.length}} / 10</md-hint>
+        <input mdInput #nomex [(ngModel)]="nome" [ngModelOptions]="{standalone: true}" placeholder="Nome" value="">
       </md-input-container>
       <md-input-container class="input">
-        <input mdInput #nome placeholder="Preço" value="">
+        <input mdInput #tagx [(ngModel)]="tag" [ngModelOptions]="{standalone: true}" maxlength="10" placeholder="Tag" value="">
+        <md-hint align="end">{{tagx.value.length}} / 10</md-hint>
       </md-input-container>
-      <button md-raised-button md-button routerLink=".">
+      <md-input-container class="input">
+        <input mdInput #precox [(ngModel)]="preco" [ngModelOptions]="{standalone: true}" placeholder="Preço" value="">
+      </md-input-container>
+      <canvas id="canvas1" width="100" height="100"></canvas>
+      <button md-raised-button md-button color="primary">
         Salvar
         <i class="material-icons">done</i>
-    </button>
+      </button>
   </form>
 </div>

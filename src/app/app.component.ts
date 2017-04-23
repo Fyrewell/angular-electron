@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import * as childProcess from 'child_process';
 
-import * as SerialPort from 'serialport';
+import { SerialPortService } from './services/serialport.service';
+
+import { IndexedDbService } from './services/indexed-db.service';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +13,8 @@ import * as SerialPort from 'serialport';
 })
 export class AppComponent {
   title = `App works !`;
-  arduinoComName = '';
-  arduinoPort;
+  carregando = false;
+  carregandoObs;
 
   navLinks = [
     { label: 'INICIO', path: '/inicial', icon: '' },
@@ -20,37 +22,12 @@ export class AppComponent {
     { label: 'COMPRAS', path: '/compras', icon: 'shopping_cart' }
   ];
 
-  constructor() {
-/*
-[{
-		"comName" : "COM1",
-		"manufacturer" : "(Tipos de porta padr�o)",
-		"pnpId" : "ACPI\\PNP0501\\1"
-	}, {
-		"comName" : "COM19",
-		"manufacturer" : "http://www.intel.com",
-		"pnpId" : "USB\\VID_8087&PID_0AB6\\AE6774SQ60600P5",
-		"locationId" : "Port_#0003.Hub_#0004",
-		"vendorId" : "8087",
-		"productId" : "0AB6"
-	}
-]
-*/
-    SerialPort.list((err, ports) => {
-      console.log('ports', ports);
-      for (let port of ports){
-        if (port.vendorId == '8087' && port.productId == '0AB6'){
-          this.arduinoComName = port.comName;
-          this.arduinoPort = new SerialPort(this.arduinoComName, { autoOpen: false, baudRate: 9600 }, () => {});
-          this.arduinoPort.on('open', () => {
-            this.arduinoPort.write('teste de envio arduino');
-          });
-          this.arduinoPort.on('data', (data) => {
-            console.log('Data: ' + data);
-          });
-          this.arduinoPort.open(this.arduinoComName);
-        }
-      }
+  constructor(public serialPortService: SerialPortService,
+    public indexedDb: IndexedDbService) {
+    this.carregandoObs = serialPortService.carregandoTopic();
+    this.carregandoObs.subscribe((data)=>{
+      console.log('yae',data);
+      this.carregando = data;
     });
     // Check if electron is correctly injected (see externals in webpack.config.js)
     console.log('c', ipcRenderer);

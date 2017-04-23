@@ -8,21 +8,10 @@
 </md-toolbar>
 <div style="max-width:700px;margin:0 auto;">
   <md-nav-list>
-    <md-list-item> OMO com Toque de Comfort Dourado em Pó
+    <md-list-item *ngFor="let produto of produtos;"
+      (click)="abrirProduto(produto.id)"> {{produto.nome}}
       <span class="fill-remaining-space"></span>
-      <button md-icon-button (click)="excluirProduto(id)">
-        <i class="material-icons">delete</i>
-      </button>
-    </md-list-item>
-    <md-list-item> Escova Dental Oral-B Pro-Saúde Ultrafino
-      <span class="fill-remaining-space"></span>
-      <button md-icon-button (click)="excluirProduto(id)">
-        <i class="material-icons">delete</i>
-      </button>
-    </md-list-item>
-    <md-list-item> Bis Branco
-      <span class="fill-remaining-space"></span>
-      <button md-icon-button (click)="excluirProduto(id)">
+      <button md-icon-button (click)="excluirProduto(produto.id)">
         <i class="material-icons">delete</i>
       </button>
     </md-list-item>

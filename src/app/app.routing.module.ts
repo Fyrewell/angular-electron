@@ -10,8 +10,10 @@ const appRoutes: Routes = [
     { path: 'inicial', component: InicialComponent },
     { path: 'produtos', component: ProdutosComponent },
     { path: 'produtos-detalhe', component: ProdutosDetalheComponent },
+    { path: 'produtos-detalhe/:id', component: ProdutosDetalheComponent },
     { path: 'compras', component: ComprasComponent },
     { path: 'compras-detalhe', component: ComprasDetalheComponent },
+    { path: 'compras-detalhe/:id', component: ComprasDetalheComponent },
     { path: '**', component: PaginaNaoEncontradaComponent }
 ];
 

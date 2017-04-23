@@ -3,24 +3,11 @@
 </md-toolbar>
 <div style="max-width:700px;margin:0 auto;">
   <md-nav-list>
-    <md-list-item> 23/04/2014
+    <md-list-item *ngFor="let compra of compras;"
+      (click)="abrirCompra(compra.id)"> {{compra.data}}
       <span class="fill-remaining-space"></span>
-      <span class="fill-remaining-space">R$ 200,00</span>
-      <button md-icon-button (click)="excluirProduto(id)">
-        <i class="material-icons">delete</i>
-      </button>
-    </md-list-item>
-    <md-list-item> 22/04/2014
-      <span class="fill-remaining-space"></span>
-      <span class="fill-remaining-space">R$ 32,00</span>
-      <button md-icon-button (click)="excluirProduto(id)">
-        <i class="material-icons">delete</i>
-      </button>
-    </md-list-item>
-    <md-list-item> 21/04/2014
-      <span class="fill-remaining-space"></span>
-      <span class="fill-remaining-space">R$ 101,50</span>
-      <button md-icon-button (click)="excluirProduto(id)">
+      <span class="fill-remaining-space">R$ {{compra.preco}}</span>
+      <button md-icon-button (click)="excluirCompra(compra.id)">
         <i class="material-icons">delete</i>
       </button>
     </md-list-item>

@@ -2,7 +2,11 @@
 .nav-bar {
   border-bottom:0px
 }
-
 .mat-button {
   line-height: 48px;
 }
+.fill-remaining-space {
+  flex: 1 1 auto;
+}
+
+:host {display: block;}

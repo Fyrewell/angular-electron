@@ -11,7 +11,11 @@ import { InicialComponent, ProdutosComponent, ProdutosDetalheComponent,
 ComprasComponent, ComprasDetalheComponent, PaginaNaoEncontradaComponent } from './pages';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MdToolbarModule, MdTabsModule, MdButtonModule, MdListModule, MdInputModule } from '@angular/material';
+import { MaterialModule, MdSnackBar } from '@angular/material';
+
+import { IndexedDbService } from './services/indexed-db.service';
+import { IndexedDbFactory } from './services/indexed-db.factory';
+import { SerialPortService } from './services/serialport.service';
 
 @NgModule({
   declarations: [
@@ -29,13 +33,13 @@ import { MdToolbarModule, MdTabsModule, MdButtonModule, MdListModule, MdInputMod
     HttpModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MdToolbarModule,
-    MdTabsModule,
-    MdButtonModule,
-    MdListModule,
-    MdInputModule
+    MaterialModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    {provide: IndexedDbService, useFactory: IndexedDbFactory},
+    MdSnackBar,
+    SerialPortService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
