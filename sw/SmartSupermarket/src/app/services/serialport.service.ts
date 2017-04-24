@@ -1,9 +1,9 @@
 
 import { Injectable } from '@angular/core';
-
 import * as SerialPort from 'serialport';
-
 import { Observable } from 'rxjs/Observable';
+
+import { IndexedDbService } from './indexed-db.service';
 
 @Injectable()
 export class SerialPortService {
@@ -12,7 +12,7 @@ export class SerialPortService {
   public carregando:boolean = false;
   carregandoObs;
 
-  constructor() {
+  constructor(public indexedDb: IndexedDbService) {
     /*
     [{
         "comName" : "COM1",
@@ -31,7 +31,9 @@ export class SerialPortService {
     SerialPort.list((err, ports) => {
       console.log('ports', ports);
       for (let port of ports){
-        if (port.vendorId == '8087' && port.productId == '0AB6'){
+        if ((port.vendorId == '8087' && port.productId == '0AB6')  // uno 101
+         || (port.vendorId == '2341' && port.productId == '003D')) // due
+         {
           this.arduinoComName = port.comName;
           this.arduinoPort = new SerialPort(this.arduinoComName, {
             parser: SerialPort.parsers.readline('#'),
@@ -49,14 +51,6 @@ export class SerialPortService {
     });
   }
 
-  enviar(data: any) {
-    this.carregandoObs.next(true);
-    this.arduinoPort.write(data, (err) => {
-      console.log(err);
-      this.carregandoObs.next(false);
-    });
-  }
-
   carregandoTopic() {
     return Observable.create((observer) => {
       this.carregandoObs = observer;
@@ -64,14 +58,36 @@ export class SerialPortService {
     });
   }
 
-  trataDadosRecebidos(data) {
+  enviar(dados: any) {
+    this.carregandoObs.next(true);
+    this.arduinoPort.write(dados, (err) => {
+      console.log(err);
+      this.gravarLog(new Date().toLocaleString(), ''+dados, 1);
+      this.carregandoObs.next(false);
+    });
+  }
+
+
+  trataDadosRecebidos(dados) {
     //log
 
-    console.log(data);
+    console.log(dados);
+
+    this.gravarLog(new Date().toLocaleString(), ''+dados, 0);
     //console.log(JSON.parse(''+data));
   }
 
   enviarTeste() {
     this.enviar('hello wordl#');
   }
+
+  gravarLog(datetime:string, dados:string, direcao:number) {
+    let logSerial = {quando:datetime, dados:dados, direcao:direcao};
+    this.indexedDb.update('logSerial', logSerial).then(() => {
+        console.log('Log inserido com sucesso!');
+    }, (error) => {
+        //console.log(error);
+    });
+  }
+
 }

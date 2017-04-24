@@ -27,6 +27,13 @@ export function IndexedDbFactory() {
     objectStoreItemCompra.createIndex("id_produto", "id_produto", { unique: false });
     objectStoreItemCompra.createIndex("preco", "preco", { unique: false });
 
+    //logSerial
+    let objectStoreLogSerial = evt.currentTarget.result.createObjectStore(
+        'logSerial', { keyPath: "id", autoIncrement: true });
+    objectStoreLogSerial.createIndex("quando", "quando", { unique: false });
+    objectStoreLogSerial.createIndex("dados", "dados", { unique: false });
+    objectStoreLogSerial.createIndex("direcao", "direcao", { unique: false });
+
   }).then((xx)=> {
     console.log(xx, 'banco criado');
   });
