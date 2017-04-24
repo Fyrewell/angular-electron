@@ -1,0 +1,29 @@
+<md-toolbar color="accent" style="padding-top:114px">
+  <p small>{{tituloOperacao}} Produto</p>
+  <div style="max-width:700px;margin:0 auto;">
+    <a md-fab routerLink="/produtos" color="warn" class="button_return">
+      <i class="material-icons">keyboard_return</i>
+    </a>
+  </div>
+</md-toolbar>
+<div style="max-width:700px;margin:0 auto;padding:20px">
+  <form (ngSubmit)="salvarProduto()">
+      <md-input-container class="input">
+        <input mdInput placeholder="#" disabled [(ngModel)]="id" [ngModelOptions]="{standalone: true}">
+      </md-input-container>
+      <md-input-container class="input">
+        <input mdInput #nomex [(ngModel)]="nome" [ngModelOptions]="{standalone: true}" placeholder="Nome" value="">
+      </md-input-container>
+      <md-input-container class="input">
+        <input mdInput #tagx [(ngModel)]="tag" [ngModelOptions]="{standalone: true}" maxlength="10" placeholder="Tag" value="">
+        <md-hint align="end">{{tagx.value.length}} / 10</md-hint>
+      </md-input-container>
+      <md-input-container class="input">
+        <input mdInput #precox [(ngModel)]="preco" [ngModelOptions]="{standalone: true}" placeholder="Preço" value="">
+      </md-input-container>
+      <button md-raised-button md-button color="primary">
+        Salvar
+        <i class="material-icons">done</i>
+      </button>
+  </form>
+</div>
