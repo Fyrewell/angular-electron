@@ -40,6 +40,7 @@ void telaInicio();
 // VARIAVEIS
 //-----------------------------//
 unsigned int tecla=255;
+String serialInput = "", Tag = "";
 
 void setup()
 {
@@ -61,9 +62,9 @@ void loop()
 
   if(tecla==1){
     tecla = leTecladoTelaConsultar();
+
   }else if(tecla==2){
     tecla = leTecladoTelaComprar();
-
     
   }else{
     tecla = leTecladoTelaPrincipal();
@@ -139,6 +140,69 @@ unsigned int leTecladoTelaComprar(){
 
 void esperaSoltarBotao(){
   while (STOUCH.dataAvailable());
+}
+
+void leituraMRFC(){
+  /*
+  /while ( ! mfrc522.PICC_IsNewCardPresent());
+  // Select one of the cards
+  while ( ! mfrc522.PICC_ReadCardSerial()) ;
+  //Mostra UID na serial
+  Serial.print("UID da tag :");
+  String conteudo= "";
+  byte letra;
+  for (byte i = 0; i < mfrc522.uid.size; i++) 
+  {
+     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
+     Serial.print(mfrc522.uid.uidByte[i], HEX);
+     conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
+     conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
+  }
+  conteudo.toUpperCase();
+  
+  //Tag = conteudo.substring(1);*/
+
+  Tag ="AB02D1A4";
+  //GLCD.print("Tag lida: " + Tag, 10, 60);
+  //Tag.replace(" ", "%20");
+  //GLCD.print("Enviando... ", 10, 80);
+
+reenvia:
+  Serial.write(Tag.c_str());
+  Serial.write("#");
+  unsigned int x = 1;
+  while(!Serial.available()){
+    x++;
+    if (x==0){
+      goto reenvia;
+    }
+  }
+
+  while(true){
+    if (Serial.available()){
+      char c = Serial.read();
+      if (c!='#'){
+        serialInput += c;
+      }else{
+        serialInput = "";
+        imprimirInformacoesProduto(0);
+        break;
+      }
+    }
+  }
+
+}
+
+void imprimirInformacoesProduto(unsigned char tela){ //0 =consultar/ 1=comprar
+  if(tela==0){
+    GLCD.print("Nome", CENTER, 48);
+  }else{
+    GLCD.print("Nome", 4, 10);
+  }
+}
+
+void verificarSerialCompra(){
+  
 }
 
 void telaInicio(){
