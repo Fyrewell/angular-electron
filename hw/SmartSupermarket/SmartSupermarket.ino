@@ -14,6 +14,14 @@
 #include <UTFT.h>
 #include <UTouch.h>
 
+#include <MFRC522.h>
+#include <SPI.h>
+
+#define SAD 10
+#define RST 5
+
+MFRC522 nfc(SAD, RST);
+
 UTFT GLCD(ITDB32S, 38, 39, 40, 41);
 UTouch STOUCH(6, 5, 4, 3, 2);
 
@@ -47,6 +55,10 @@ void setup()
 
   Serial.begin(9600);
 
+  SPI.begin();
+
+  nfc.begin();
+
   GLCD.InitLCD();
   GLCD.clrScr();
   GLCD.setFont(BigFont);
@@ -62,9 +74,11 @@ void loop()
 
   if(tecla==1){
     tecla = leTecladoTelaConsultar();
+    leituraMRFC();
 
   }else if(tecla==2){
     tecla = leTecladoTelaComprar();
+    leituraMRFC();
     
   }else{
     tecla = leTecladoTelaPrincipal();
@@ -143,26 +157,40 @@ void esperaSoltarBotao(){
 }
 
 void leituraMRFC(){
-  /*
-  /while ( ! mfrc522.PICC_IsNewCardPresent());
-  // Select one of the cards
-  while ( ! mfrc522.PICC_ReadCardSerial()) ;
-  //Mostra UID na serial
-  Serial.print("UID da tag :");
+  byte status;
+  byte data[MAX_LEN];
+  byte serial[5];
+  int i, j, pos;
   String conteudo= "";
-  byte letra;
-  for (byte i = 0; i < mfrc522.uid.size; i++) 
-  {
-     Serial.print(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " ");
-     Serial.print(mfrc522.uid.uidByte[i], HEX);
-     conteudo.concat(String(mfrc522.uid.uidByte[i] < 0x10 ? " 0" : " "));
-     conteudo.concat(String(mfrc522.uid.uidByte[i], HEX));
-  }
-  conteudo.toUpperCase();
-  
-  //Tag = conteudo.substring(1);*/
 
-  Tag ="AB02D1A4";
+  status = nfc.requestTag(MF1_REQIDL, data);
+
+  if (status == MI_OK) {
+    Serial.println();
+    Serial.println("Tag detected.");
+
+
+    status = nfc.antiCollision(data);
+    memcpy(serial, data, 5);
+
+   
+    Serial.println("The serial nb of the tag is:");
+    for (i = 0; i < 4; i++) {
+
+      Serial.print(serial[i] < 0x10 ? "0" : "");
+      Serial.print(serial[i], HEX);
+      conteudo.concat(String(serial[i] < 0x10 ? "0" : ""));
+      conteudo.concat(String(serial[i], HEX));
+    }
+  
+
+    nfc.selectTag(serial);
+
+    nfc.haltTag();
+
+  conteudo.toUpperCase();  
+  
+  Tag = conteudo; //"AB02D1A4";
   //GLCD.print("Tag lida: " + Tag, 10, 60);
   //Tag.replace(" ", "%20");
   //GLCD.print("Enviando... ", 10, 80);
@@ -190,7 +218,7 @@ reenvia:
       }
     }
   }
-
+  }
 }
 
 void imprimirInformacoesProduto(unsigned char tela){ //0 =consultar/ 1=comprar
