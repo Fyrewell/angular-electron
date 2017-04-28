@@ -6,6 +6,7 @@ import { SerialPortService } from './services/serialport.service';
 
 import { IndexedDbService } from './services/indexed-db.service';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -33,6 +34,11 @@ export class AppComponent {
     console.log('c', ipcRenderer);
     // Check if nodeJs childProcess is correctly injected (see externals in webpack.config.js)
     console.log('c', childProcess);
+
+    ipcRenderer.on('request', function (req, port) {
+        console.log(req, port);
+        req.sender.send('response', 'FUCK YEAH#')
+    });
 
   }
 }

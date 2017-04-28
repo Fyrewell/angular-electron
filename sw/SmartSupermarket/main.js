@@ -1,7 +1,7 @@
 'use strict';
 const electron = require('electron');
 // Module to control application life.
-const {app} = electron;
+const {app, ipcMain} = electron;
 // Module to create native browser window.
 const {BrowserWindow} = electron;
 
@@ -38,6 +38,33 @@ function createWindow() {
 
     // and load the index.html of the app.
     win.loadURL(url);
+
+    ipcMain.on("console", function (ev) {
+        var args = [].slice.call(arguments, 1);
+        var r = console.log.apply(console, args);
+        ev.returnValue = [r];
+    });
+    ipcMain.on("app", function (ev, msg) {
+        var args = [].slice.call(arguments, 2);
+        ev.returnValue = [app[msg].apply(app, args)];
+    });
+    //win.loadURL("file://" + __dirname + "/app.html");
+    win.webContents.once("did-finish-load", function () {
+        var http = require("http");
+        var crypto = require("crypto");
+        var server = http.createServer(function (req, res) {
+            var port = crypto.randomBytes(16).toString("hex");
+            win.webContents.send('request', req, port);
+            ipcMain.once('response', (event, arg) => {
+              res.setHeader('Content-Type', 'text/html');
+              res.writeHead(200, {'Content-Type': 'text/plain'});
+              res.end(JSON.stringify(arg));
+            });
+        });
+        server.listen(8000);
+        console.log("http://localhost:8000/");
+    });
+
 
     // Open the DevTools.
     //if (serve) {
