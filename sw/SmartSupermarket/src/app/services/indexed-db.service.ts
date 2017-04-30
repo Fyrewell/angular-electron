@@ -112,12 +112,15 @@ export class IndexedDbService {
                         reject(e);
                     },
                     complete: (e: Event) => {
-                        resolve({ key: key, value: value });
+                        //resolve({ key: e, value: value });
                     }
                 }),
                 objectStore = transaction.objectStore(storeName);
 
-            objectStore.add(value, key);
+            let res = objectStore.add(value, key);
+            res.onsuccess = (e) => {
+              resolve({ key: e.target['result'], value: value });
+            };
         });
 
         return promise;

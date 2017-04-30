@@ -40,7 +40,7 @@ export class SerialPortService {
             baudRate: 9600 });
 
           this.arduinoPort.on('open', () => {
-              window.setTimeout(this.enviarTeste(), 4000);
+              //window.setTimeout(this.enviarTeste(), 4000);
           });
 
           this.arduinoPort.on('data', (data) => {
@@ -74,34 +74,58 @@ export class SerialPortService {
 
     console.log(dados);
     if (dados[0] == '0'){ //consultar
-      var tag = dados.substring(2);
-      this.indexedDb.getAll('produtos').then((produtos)=>{
-        let achou = false;
-        let produtoEnviar;
-        for (let produto of produtos){
-          if (produto.tag == tag){
-            produtoEnviar = produto;
-            achou = true;
-          }
-        }
-
-        if (!achou) {
-          this.enviar('2|'+tag+'|produto nao encontrado#');
+      var uuid = dados.substring(2);
+      this.indexedDb.getByKey('tags', uuid).then((tag)=>{
+        if (tag){
+          let prod_id = tag.prod_id;
+          this.indexedDb.getByKey('produtos', prod_id).then((produto)=>{
+            if (produto) {
+              this.enviar('0|'+produto.id+'|'+produto.nome+'|'+produto.preco+'#');
+            }else{
+              this.enviar('2|'+uuid+'|tag nao encontrada#');
+            }
+          });
         }else{
-          this.enviar('0|'+produtoEnviar.nome+'|'+produtoEnviar.preco+'#');
+          this.enviar('2|'+uuid+'|tag nao encontrada#');
         }
-
-        /*if (produto){
-          this.nome = produto.nome;
-          this.tag = produto.tag;
-          this.preco = produto.preco;
-          this.serialPort.enviar('0'+this.nome+'|'+this.preco+'#');
-        }*/
       });
-    }else{ //comprar
+    }else if (dados[0] == '1'){ //comprar
+      var arrDados = dados.substring(2).split('|');
+      console.log(arrDados);
+      if (arrDados[1]){ //compra ja iniciada
+        this.indexedDb.getByKey('compras', arrDados[3]).then((compra)=>{
+          if (compra) {
+            //this.enviar('0|'+produto.id+'|'+produto.nome+'|'+produto.preco+'#');
+
+          }
+        });
+      }else{ //primeiro produto
+        let uuid = arrDados[0];
+        this.indexedDb.getByKey('tags', uuid).then((tag)=>{
+          if (tag){
+            let prod_id = tag.prod_id;
+            this.indexedDb.getByKey('produtos', prod_id).then((produto)=>{
+              if (produto) {
+                this.indexedDb.add('compras', {data:new Date().toLocaleString(), preco:produto.preco}).then((res) => {
+                  console.log('Compra inserida com sucesso!');
+                  this.enviar('0|'+produto.id+'|'+produto.nome+'|'+produto.preco+'|'+res.key+'#');
+                }, (error) => {
+                    //console.log(error);
+                });
+              }else{
+                this.enviar('2|'+uuid+'|tag nao encontrada#');
+              }
+            });
+          }else{
+            this.enviar('2|'+uuid+'|tag nao encontrada#');
+          }
+        });
+
+      }
+
+    }else{ //cancelar compra
 
     }
-    //console.log(JSON.parse(''+data));
   }
 
   enviarTeste() {
