@@ -39,16 +39,6 @@ function createWindow() {
     // and load the index.html of the app.
     win.loadURL(url);
 
-    ipcMain.on("console", function (ev) {
-        var args = [].slice.call(arguments, 1);
-        var r = console.log.apply(console, args);
-        ev.returnValue = [r];
-    });
-    ipcMain.on("app", function (ev, msg) {
-        var args = [].slice.call(arguments, 2);
-        ev.returnValue = [app[msg].apply(app, args)];
-    });
-    //win.loadURL("file://" + __dirname + "/app.html");
     win.webContents.once("did-finish-load", function () {
         var http = require("http");
         var crypto = require("crypto");
@@ -58,7 +48,7 @@ function createWindow() {
             ipcMain.once('response', (event, arg) => {
               res.setHeader('Content-Type', 'text/html');
               res.writeHead(200, {'Content-Type': 'text/plain'});
-              res.end(JSON.stringify(arg));
+              res.end(arg);
             });
         });
         server.listen(8000);

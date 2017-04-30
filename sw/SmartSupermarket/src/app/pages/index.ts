@@ -4,3 +4,6 @@ export * from './produtos/produtos.component';
 export * from './produtos/produtos-detalhe/produtos-detalhe.component';
 export * from './compras/compras.component';
 export * from './compras/compras-detalhe/compras-detalhe.component';
+export * from './logs/logs.component';
+export * from './tags/tags.component';
+export * from './tags/tags-detalhe/tags-detalhe.component';

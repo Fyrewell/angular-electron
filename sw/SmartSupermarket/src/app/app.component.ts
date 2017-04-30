@@ -1,11 +1,8 @@
 import { Component } from '@angular/core';
 import { ipcRenderer } from 'electron';
 import * as childProcess from 'child_process';
-
 import { SerialPortService } from './services/serialport.service';
-
 import { IndexedDbService } from './services/indexed-db.service';
-
 
 @Component({
   selector: 'app-root',
@@ -20,7 +17,9 @@ export class AppComponent {
   navLinks = [
     { label: 'INICIO', path: '/inicial', icon: '' },
     { label: 'PRODUTOS', path: '/produtos', icon: 'shopping_basket' },
-    { label: 'COMPRAS', path: '/compras', icon: 'shopping_cart' }
+    { label: 'TAGS', path: '/tags', icon: 'local_offer' },
+    { label: 'COMPRAS', path: '/compras', icon: 'shopping_cart' },
+    { label: 'LOGS', path: '/logs', icon: 'find_in_page' }
   ];
 
   constructor(public serialPortService: SerialPortService,

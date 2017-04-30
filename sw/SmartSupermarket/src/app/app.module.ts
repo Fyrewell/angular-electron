@@ -8,7 +8,8 @@ import { AppComponent } from './app.component';
 
 import { AppRoutingModule } from './app.routing.module';
 import { InicialComponent, ProdutosComponent, ProdutosDetalheComponent,
-ComprasComponent, ComprasDetalheComponent, PaginaNaoEncontradaComponent } from './pages';
+ComprasComponent, ComprasDetalheComponent, PaginaNaoEncontradaComponent,
+LogsComponent, TagsComponent, TagsDetalheComponent } from './pages';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule, MdSnackBar } from '@angular/material';
@@ -25,6 +26,9 @@ import { SerialPortService } from './services/serialport.service';
     ProdutosDetalheComponent,
     ComprasComponent,
     ComprasDetalheComponent,
+    LogsComponent,
+    TagsComponent,
+    TagsDetalheComponent,
     PaginaNaoEncontradaComponent
   ],
   imports: [

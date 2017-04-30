@@ -3,7 +3,8 @@ import { ModuleWithProviders } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 import { InicialComponent, ProdutosComponent, ProdutosDetalheComponent,
- ComprasComponent, ComprasDetalheComponent, PaginaNaoEncontradaComponent } from './pages';
+ ComprasComponent, ComprasDetalheComponent, PaginaNaoEncontradaComponent,
+ LogsComponent, TagsComponent, TagsDetalheComponent } from './pages';
 
 const appRoutes: Routes = [
     { path: '', redirectTo: '/inicial', pathMatch: 'full' },
@@ -14,6 +15,10 @@ const appRoutes: Routes = [
     { path: 'compras', component: ComprasComponent },
     { path: 'compras-detalhe', component: ComprasDetalheComponent },
     { path: 'compras-detalhe/:id', component: ComprasDetalheComponent },
+    { path: 'logs', component: LogsComponent },
+    { path: 'tags', component: TagsComponent },
+    { path: 'tags-detalhe', component: TagsDetalheComponent },
+    { path: 'tags-detalhe/:uuid', component: TagsDetalheComponent },
     { path: '**', component: PaginaNaoEncontradaComponent }
 ];
 

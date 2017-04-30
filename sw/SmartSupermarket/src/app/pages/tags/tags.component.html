@@ -1,0 +1,20 @@
+<md-toolbar color="accent" style="padding-top:114px">
+  <p small>Lista de Tags</p>
+  <div style="max-width:700px;margin:0 auto;">
+    <a md-fab routerLink="/tags-detalhe" color="warn" class="button_add">
+      <i class="material-icons">add</i>
+    </a>
+  </div>
+</md-toolbar>
+<div style="max-width:700px;margin:0 auto;">
+  <md-nav-list>
+    <md-list-item *ngFor="let tag of tags;"
+      (click)="abrirTag(tag.uuid)">
+      <span class="fill-remaining-space">{{tag.uuid}}</span>
+      <span class="fill-remaining-space">{{tag.prod_id}}</span>
+      <button md-icon-button (click)="excluirTag(tag.uuid)">
+        <i class="material-icons">delete</i>
+      </button>
+    </md-list-item>
+  </md-nav-list>
+</div>

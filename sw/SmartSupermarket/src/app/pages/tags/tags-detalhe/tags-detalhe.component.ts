@@ -7,27 +7,26 @@ import { MdSnackBar } from '@angular/material';
 import { SerialPortService } from '../../../services/serialport.service';
 
 @Component({
-  selector: 'page-produtos-detalhe',
-  templateUrl: 'produtos-detalhe.component.html',
-  styleUrls: ['./produtos-detalhe.component.scss']
+  selector: 'page-tags-detalhe',
+  templateUrl: 'tags-detalhe.component.html',
+  styleUrls: ['./tags-detalhe.component.scss']
 })
-export class ProdutosDetalheComponent implements OnInit {
+export class TagsDetalheComponent implements OnInit {
   tituloOperacao: string = 'Adicionar';
-  nome;
-  preco;
-  id;
+  uuid;
+  prod_id;
 
   constructor(public route: ActivatedRoute, public router: Router,
     public indexedDb: IndexedDbService, public snackbar: MdSnackBar,
     public serialPort: SerialPortService) {
     this.route.params.subscribe(
       (params: any) => {
-        this.id = params['id'];
-        if (this.id) {
-          this.indexedDb.getByKey('produtos', +this.id).then((produto)=>{
-            if (produto){
-              this.nome = produto.nome;
-              this.preco = produto.preco;
+        this.uuid = params['uuid'];
+        if (this.uuid) {
+          this.indexedDb.getByKey('tags', this.uuid).then((tag)=>{
+            if (tag){
+              this.uuid = tag.uuid;
+              this.prod_id = tag.prod_id;
             }
             this.tituloOperacao = 'Editar';
           });
@@ -40,14 +39,14 @@ export class ProdutosDetalheComponent implements OnInit {
 
   }
 
-  salvarProduto() {
-    let prodObj = { nome:this.nome, preco:this.preco };
-    if (this.id) prodObj['id'] = +this.id;
-    this.indexedDb.update('produtos', prodObj).then(() => {
-        this.snackbar.open('Produto salvo com sucesso!', 'OK', {
+  salvarTag() {
+    let tagObj = { uuid:this.uuid, prod_id:this.prod_id };
+    if (this.uuid) tagObj['uuid'] = this.uuid;
+    this.indexedDb.update('tags', tagObj).then(() => {
+        this.snackbar.open('Tag salva com sucesso!', 'OK', {
           duration: 3000
         });
-        this.router.navigate(['/produtos']);
+        this.router.navigate(['/tags']);
     }, (error) => {
         console.log(error);
     });

@@ -70,10 +70,37 @@ export class SerialPortService {
 
   trataDadosRecebidos(dados) {
     //log
+    this.gravarLog(new Date().toLocaleString(), ''+dados, 0);
 
     console.log(dados);
+    if (dados[0] == '0'){ //consultar
+      var tag = dados.substring(2);
+      this.indexedDb.getAll('produtos').then((produtos)=>{
+        let achou = false;
+        let produtoEnviar;
+        for (let produto of produtos){
+          if (produto.tag == tag){
+            produtoEnviar = produto;
+            achou = true;
+          }
+        }
 
-    this.gravarLog(new Date().toLocaleString(), ''+dados, 0);
+        if (!achou) {
+          this.enviar('2|'+tag+'|produto nao encontrado#');
+        }else{
+          this.enviar('0|'+produtoEnviar.nome+'|'+produtoEnviar.preco+'#');
+        }
+
+        /*if (produto){
+          this.nome = produto.nome;
+          this.tag = produto.tag;
+          this.preco = produto.preco;
+          this.serialPort.enviar('0'+this.nome+'|'+this.preco+'#');
+        }*/
+      });
+    }else{ //comprar
+
+    }
     //console.log(JSON.parse(''+data));
   }
 

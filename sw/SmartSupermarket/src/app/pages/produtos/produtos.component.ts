@@ -9,7 +9,7 @@ import { MdSnackBar } from '@angular/material';
   styleUrls: ['./produtos.component.scss']
 })
 export class ProdutosComponent implements OnInit {
-  produtos: [{tag,nome,preco}];
+  produtos: [{nome,preco}];
 
   constructor(public route: ActivatedRoute, public router: Router,
     public indexedDb: IndexedDbService, public snackbar: MdSnackBar,) {
@@ -24,10 +24,10 @@ export class ProdutosComponent implements OnInit {
   //POPULA TEMPORARIO
   popularProdutos() {
     let produtosObj = [
-      { tag:'AABBCCDDEE', nome:'Amaciante Em Pó', preco:'32' },
-      { tag:'1000000000', nome:'Refrigerante de Cola', preco:'24' },
-      { tag:'1234567891', nome:'Salgadinho Cebolitão', preco:'10' },
-      { tag:'6AB95D687A', nome:'Escova Dental Maciex', preco:'11' },
+      { id: 1, nome:'Amaciante Em Pó', preco:'32' },
+      { id: 2, nome:'Refrigerante de Cola', preco:'24' },
+      { id: 3, nome:'Salgadinho Cebolitão', preco:'10' },
+      { id: 4, nome:'Escova Dental Maciex', preco:'11' },
     ];
     for (let produto of produtosObj) {
       this.indexedDb.update('produtos', produto).then(() => {

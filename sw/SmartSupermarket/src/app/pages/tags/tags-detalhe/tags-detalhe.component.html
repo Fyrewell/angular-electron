@@ -1,0 +1,23 @@
+<md-toolbar color="accent" style="padding-top:114px">
+  <p small>{{tituloOperacao}} Tag</p>
+  <div style="max-width:700px;margin:0 auto;">
+    <a md-fab routerLink="/tags" color="warn" class="button_return">
+      <i class="material-icons">keyboard_return</i>
+    </a>
+  </div>
+</md-toolbar>
+<div style="max-width:700px;margin:0 auto;padding:20px">
+  <form (ngSubmit)="salvarTag()">
+    <md-input-container class="input">
+      <input mdInput #uuidx [(ngModel)]="uuid" [ngModelOptions]="{standalone: true}" maxlength="8" placeholder="UUID" value="">
+      <md-hint align="end">{{uuidx.value.length}} / 8</md-hint>
+    </md-input-container>
+    <md-input-container class="input">
+      <input mdInput #prodidx [(ngModel)]="prod_id" [ngModelOptions]="{standalone: true}" placeholder="Produto" value="">
+    </md-input-container>
+    <button md-raised-button md-button color="primary">
+      Salvar
+      <i class="material-icons">done</i>
+    </button>
+  </form>
+</div>

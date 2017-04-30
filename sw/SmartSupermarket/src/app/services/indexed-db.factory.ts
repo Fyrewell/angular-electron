@@ -10,9 +10,13 @@ export function IndexedDbFactory() {
     //produtos
     let objectStoreProd = evt.currentTarget.result.createObjectStore(
         'produtos', { keyPath: "id", autoIncrement: true });
-    objectStoreProd.createIndex("tag", "tag", { unique: true });
     objectStoreProd.createIndex("nome", "nome", { unique: false });
     objectStoreProd.createIndex("preco", "preco", { unique: false });
+
+    //tags
+    let objectStoreTag = evt.currentTarget.result.createObjectStore(
+        'tags', { keyPath: "uuid" });
+    objectStoreTag.createIndex("prod_id", "prod_id", { unique: false });
 
     //compras
     let objectStoreCompras = evt.currentTarget.result.createObjectStore(
@@ -33,6 +37,13 @@ export function IndexedDbFactory() {
     objectStoreLogSerial.createIndex("quando", "quando", { unique: false });
     objectStoreLogSerial.createIndex("dados", "dados", { unique: false });
     objectStoreLogSerial.createIndex("direcao", "direcao", { unique: false });
+
+    //logServer
+    let objectStoreLogServer = evt.currentTarget.result.createObjectStore(
+        'logServer', { keyPath: "id", autoIncrement: true });
+    objectStoreLogServer.createIndex("quando", "quando", { unique: false });
+    objectStoreLogServer.createIndex("dados", "dados", { unique: false });
+    objectStoreLogServer.createIndex("direcao", "direcao", { unique: false });
 
   }).then((xx)=> {
     console.log(xx, 'banco criado');

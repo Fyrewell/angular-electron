@@ -1,0 +1,27 @@
+<md-toolbar color="accent" style="padding-top:114px">
+  <p small>Logs</p>
+</md-toolbar>
+<div style="max-width:700px;margin:0 auto;">
+
+  <md-tab-group>
+    <md-tab label="Logs Serial">
+      <md-nav-list>
+        <md-list-item *ngFor="let log of logSerial;">
+          <span class="fill-remaining-space">{{log.quando}}</span>
+          <span class="fill-remaining-space">{{log.direcao}}</span>
+          <span class="fill-remaining-space">{{log.dados}}</span>
+        </md-list-item>
+      </md-nav-list>
+    </md-tab>
+    <md-tab label="Logs Server">
+      <md-nav-list>
+        <md-list-item *ngFor="let log of logServer;">
+          <span class="fill-remaining-space">{{log.quando}}</span>
+          <span class="fill-remaining-space">{{log.direcao}}</span>
+          <span class="fill-remaining-space">{{log.dados}}</span>
+        </md-list-item>
+      </md-nav-list>
+    </md-tab>
+  </md-tab-group>
+
+</div>
