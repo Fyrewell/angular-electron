@@ -80,7 +80,7 @@ export class SerialPortService {
           let prod_id = tag.prod_id;
           this.indexedDb.getByKey('produtos', prod_id).then((produto)=>{
             if (produto) {
-              this.enviar('0|'+produto.id+'|'+produto.nome+'|'+produto.preco+'#');
+              this.enviar('0|'+produto.id+'|'+produto.nome+'|R$'+parseFloat(produto.preco).toFixed(2)+'#');
             }else{
               this.enviar('2|'+uuid+'|tag nao encontrada#');
             }
@@ -93,10 +93,41 @@ export class SerialPortService {
       var arrDados = dados.substring(2).split('|');
       console.log(arrDados);
       if (arrDados[1]){ //compra ja iniciada
-        this.indexedDb.getByKey('compras', arrDados[3]).then((compra)=>{
-          if (compra) {
-            //this.enviar('0|'+produto.id+'|'+produto.nome+'|'+produto.preco+'#');
-
+        let uuid = arrDados[0];
+        let compra_id = arrDados[1];
+        this.indexedDb.getByKey('tags', uuid).then((tag)=>{
+          if (tag){
+            let prod_id = tag.prod_id;
+            this.indexedDb.getByKey('produtos', prod_id).then((produto)=>{
+              if (produto) {
+                let itemCompra = {id_compra:compra_id, preco:produto.preco, id_produto: produto.id};
+                this.indexedDb.add('itemCompra', itemCompra).then((res) => {
+                  console.log('itemCompra inserido com sucesso!');
+                  this.indexedDb.getAll('itemCompra').then((itensCompra) => {
+                    let preco = 0;
+                    for (let item of itensCompra) {
+                      if (compra_id==item.id_compra) {
+                        preco += +item.preco;
+                      }
+                    }
+                    this.indexedDb.update('compras', {id:+compra_id,preco:preco,data:new Date().toLocaleString()}).then((res) => {
+                      console.log('Compra atualizada com sucesso!');
+                      this.enviar('1|'+produto.id+'-'+produto.nome+'|R$'+parseFloat(produto.preco).toFixed(2)+'|'+compra_id+'|R$'+parseFloat(preco+'').toFixed(2)+'#');
+                    }, (error) => {
+                        console.log(error);
+                    });
+                  }, (error) => {
+                      console.log(error);
+                  });
+                }, (error) => {
+                    console.log(error);
+                });
+              }else{
+                this.enviar('2|'+uuid+'|tag nao encontrada#');
+              }
+            });
+          }else{
+            this.enviar('2|'+uuid+'|tag nao encontrada#');
           }
         });
       }else{ //primeiro produto
@@ -108,9 +139,16 @@ export class SerialPortService {
               if (produto) {
                 this.indexedDb.add('compras', {data:new Date().toLocaleString(), preco:produto.preco}).then((res) => {
                   console.log('Compra inserida com sucesso!');
-                  this.enviar('0|'+produto.id+'|'+produto.nome+'|'+produto.preco+'|'+res.key+'#');
+                  let compra_id = res.key;
+                  let itemCompra = {id_compra:res.key, preco:produto.preco, id_produto: produto.id};
+                  this.indexedDb.add('itemCompra', itemCompra).then((res) => {
+                    console.log('itemCompra inserido com sucesso!');
+                    this.enviar('1|'+produto.id+'-'+produto.nome+'|R$'+parseFloat(produto.preco).toFixed(2)+'|'+compra_id+'|R$'+parseFloat(produto.preco).toFixed(2)+'#');
+                  }, (error) => {
+                      console.log(error);
+                  });
                 }, (error) => {
-                    //console.log(error);
+                    console.log(error);
                 });
               }else{
                 this.enviar('2|'+uuid+'|tag nao encontrada#');

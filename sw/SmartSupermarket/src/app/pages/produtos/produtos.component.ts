@@ -24,9 +24,9 @@ export class ProdutosComponent implements OnInit {
   //POPULA TEMPORARIO
   popularProdutos() {
     let produtosObj = [
-      { id: 1, nome:'Amaciante Em Po', preco:'32' },
+      { id: 1, nome:'Amaciante Em Po', preco:'32.24' },
       { id: 2, nome:'Refrigerante de Cola', preco:'24' },
-      { id: 3, nome:'Salgadinho Cebolitao', preco:'10' },
+      { id: 3, nome:'Salgadinho Cebolitao', preco:'10.51' },
       { id: 4, nome:'Escova Dental Maciex', preco:'11' },
     ];
     for (let produto of produtosObj) {

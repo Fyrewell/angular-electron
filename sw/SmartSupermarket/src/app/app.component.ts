@@ -11,8 +11,6 @@ import { IndexedDbService } from './services/indexed-db.service';
 })
 export class AppComponent {
   title = `App works !`;
-  carregando = false;
-  carregandoObs;
 
   navLinks = [
     { label: 'INICIO', path: '/inicial', icon: '' },
@@ -24,11 +22,7 @@ export class AppComponent {
 
   constructor(public serialPortService: SerialPortService,
     public indexedDb: IndexedDbService) {
-    this.carregandoObs = serialPortService.carregandoTopic();
-    this.carregandoObs.subscribe((data)=>{
-      console.log('yae',data);
-      this.carregando = data;
-    });
+
     // Check if electron is correctly injected (see externals in webpack.config.js)
     console.log('c', ipcRenderer);
     // Check if nodeJs childProcess is correctly injected (see externals in webpack.config.js)
