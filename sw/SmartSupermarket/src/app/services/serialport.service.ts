@@ -9,8 +9,6 @@ import { IndexedDbService } from './indexed-db.service';
 export class SerialPortService {
   arduinoComName;
   arduinoPort;
-  public carregando:boolean = false;
-  carregandoObs;
 
   constructor(public indexedDb: IndexedDbService) {
     /*
