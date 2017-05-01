@@ -41,6 +41,8 @@ extern unsigned short header_brand[3696];
 unsigned int leTecladoTelaPrincipal();
 unsigned int leTecladoTelaComprar();
 unsigned int leTecladoTelaConsultar();
+void leituraMRFC(String operacao);
+void imprimirInformacoesProduto(String operacao, String serialInput);
 void esperaSoltarBotao();
 void telaInicio();
 
@@ -48,7 +50,7 @@ void telaInicio();
 // VARIAVEIS
 //-----------------------------//
 unsigned int tecla=255;
-String serialInput = "", Tag = "";
+String serialInput = "", Tag = "", compraId = "", precoCompra = "";
 
 void setup()
 {
@@ -57,7 +59,7 @@ void setup()
 
   SPI.begin();
 
-  nfc.begin();
+  //nfc.begin();
 
   GLCD.InitLCD();
   GLCD.clrScr();
@@ -74,16 +76,19 @@ void loop()
 
   if(tecla==1){
     tecla = leTecladoTelaConsultar();
-    leituraMRFC();
-
-  }else if(tecla==2){
-    tecla = leTecladoTelaComprar();
-    leituraMRFC();
-    
+    leituraMRFC("0");
+  }else if(tecla==2 || tecla==3 || tecla==4){
+    tecla = leTecladoTelaComprar();   
+    if (tecla==3){
+      cancelarCompra();
+    }else if (tecla==4){
+      concluirCompra();
+    }else{
+      leituraMRFC("1");
+    }
   }else{
     tecla = leTecladoTelaPrincipal();
   }
-
 }
 
 
@@ -99,17 +104,18 @@ unsigned int leTecladoTelaPrincipal(){
       if ((x>=30) && (x<=150))  // Botao 1
       {
         esperaSoltarBotao();
-        telaConsultar();
+        telaConsultar(true);
         return 1;
       }
       if ((x>=178) && (x<=300))  //Botao 2
       {
         esperaSoltarBotao();
-        telaComprar();
+        telaComprar(true);
         return 2;
       }
     }
   }
+  return 255;
 }
 
 unsigned int leTecladoTelaConsultar(){
@@ -145,7 +151,12 @@ unsigned int leTecladoTelaComprar(){
       {
         esperaSoltarBotao();
         telaInicio();
-        return 255;
+        return 3;
+      }
+      if (x>=190)
+      {
+        esperaSoltarBotao();
+        return 4;
       }
     }
   }
@@ -156,8 +167,8 @@ void esperaSoltarBotao(){
   while (STOUCH.dataAvailable());
 }
 
-void leituraMRFC(){
-  byte status;
+void leituraMRFC(String operacao){
+  /*byte status;
   byte data[MAX_LEN];
   byte serial[5];
   int i, j, pos;
@@ -168,69 +179,194 @@ void leituraMRFC(){
   if (status == MI_OK) {
     Serial.println();
     Serial.println("Tag detected.");
-
-
+  
+  
     status = nfc.antiCollision(data);
     memcpy(serial, data, 5);
-
+  
    
-    Serial.println("The serial nb of the tag is:");
+    //Serial.println("The serial nb of the tag is:");
     for (i = 0; i < 4; i++) {
-
+  
       Serial.print(serial[i] < 0x10 ? "0" : "");
       Serial.print(serial[i], HEX);
       conteudo.concat(String(serial[i] < 0x10 ? "0" : ""));
       conteudo.concat(String(serial[i], HEX));
     }
   
-
-    nfc.selectTag(serial);
-
-    nfc.haltTag();
-
-  conteudo.toUpperCase();  
   
-  Tag = conteudo; //"AB02D1A4";
-  //GLCD.print("Tag lida: " + Tag, 10, 60);
-  //Tag.replace(" ", "%20");
-  //GLCD.print("Enviando... ", 10, 80);
+    nfc.selectTag(serial);
+  
+    nfc.haltTag();
+  
+    conteudo.toUpperCase();  
+    */
+    //Tag = conteudo; 
+    Tag = "AB02D1A4";
+    //GLCD.print("Tag lida: " + Tag, 10, 60);
+    //Tag.replace(" ", "%20");
+    //GLCD.print("Enviando... ", 10, 80);
 
 reenvia:
-  Serial.write(Tag.c_str());
-  Serial.write("#");
-  unsigned int x = 1;
-  while(!Serial.available()){
-    x++;
-    if (x==0){
-      goto reenvia;
+    operacao += "|";
+    Serial.write(operacao.c_str());
+    Serial.write(Tag.c_str());
+    if (operacao.equals("1|")){
+      compraId = "|" + compraId;
+      Serial.write(compraId.c_str());
     }
-  }
+    Serial.write("#");
+    long int x = 1;
+    while(!Serial.available()){
+      x++;
+      if (x==0){
+        goto reenvia;
+      }
+    }
 
-  while(true){
     if (Serial.available()){
-      char c = Serial.read();
-      if (c!='#'){
-        serialInput += c;
-      }else{
-        serialInput = "";
-        imprimirInformacoesProduto(0);
-        break;
+      serialInput = Serial.readStringUntil('#');
+
+      imprimirInformacoesProduto(operacao, serialInput);
+      serialInput = "";
+    }
+  //}
+}
+
+void imprimirInformacoesProduto(String operacao, String serialInput){ //0 =consultar/ 1=comprar
+  if(operacao.equals("0|")){
+    telaConsultar(false);
+    if (serialInput.charAt(0)=='2'){ // tag nao encontrada
+      serialInput = serialInput.substring(2,10);
+      GLCD.setColor(0, 0, 0);
+      GLCD.setBackColor(249, 249, 249);
+      GLCD.print("TAG NAO ENCONTRADA!", CENTER, 104);
+      GLCD.print("CADASTRE-A", CENTER, 122);
+      GLCD.print("COM A UUID: ", CENTER, 140);
+      GLCD.setColor(244, 10, 0);
+      GLCD.print(serialInput, CENTER, 156);
+    }else{
+      GLCD.setColor(0, 0, 0);
+      GLCD.setBackColor(249, 249, 249);
+
+      char buf[serialInput.length()+1];
+      serialInput.toCharArray(buf, serialInput.length()+1);
+      char *p = buf;
+      char *str;
+      GLCD.setFont(BigFont);
+      GLCD.print("   ID", 6, 104);
+      GLCD.print(" NOME", 6, 124);
+      GLCD.print("PRECO", 6, 144);
+      GLCD.setFont(SmallFont);
+      for (char count = 0;(str = strtok_r(p, "|", &p)) != NULL;count++){
+        if (count==0) continue;
+        GLCD.print(str, 98, (count*20)+86);
+      }
+    }
+  }else{
+    telaComprar(false);
+    if (serialInput.charAt(0)=='2'){ // tag nao encontrada
+
+      GLCD.setColor(0, 0, 0);
+      GLCD.setBackColor(249, 249, 249);
+
+      char buf[serialInput.length()+1];
+      serialInput.toCharArray(buf, serialInput.length()+1);
+      char *p = buf;
+      char *str;
+      GLCD.drawBitmap(200, 198, 114, 39, btn_concluir);
+      for (char count = 0;(str = strtok_r(p, "|", &p)) != NULL;count++){
+        if (count==0) continue;
+        if (count==2){
+          GLCD.print(str, 156, 114);
+        }
+        if (count==1){
+          GLCD.setFont(SmallFont);
+          GLCD.setColor(244, 10, 0);
+          GLCD.print(str, 156, 128);
+        }
+        if (count==3){
+          compraId = str;
+        }
+      }
+      GLCD.setFont(BigFont);
+      GLCD.setColor(244, 10, 0);
+      GLCD.print(precoCompra, 156, 170);
+      
+    }else{
+      char buf[serialInput.length()+1];
+      serialInput.toCharArray(buf, serialInput.length()+1);
+      char *p = buf;
+      char *str;
+      GLCD.drawBitmap(200, 198, 114, 39, btn_concluir);
+      for (char count = 0;(str = strtok_r(p, "|", &p)) != NULL;count++){
+        if (count==0) continue;
+        if (count==1){
+          GLCD.setFont(SmallFont);
+          GLCD.print(str, 156, 114);
+        }
+        if (count==2){
+          GLCD.print(str, 156, 128);
+        }
+        if (count==3){
+          compraId = str;
+        }
+        if (count==4){
+          GLCD.setFont(BigFont);
+          GLCD.setColor(244, 10, 0);
+          GLCD.print(str, 156, 170);
+          precoCompra = str;
+        }
       }
     }
   }
+  delay(5000);
+}
+
+void cancelarCompra(){
+reenviaCancelamento:
+  Serial.write("4|");
+  Serial.write(compraId.c_str());
+  Serial.write("#");
+  long int x = 1;
+  while(!Serial.available()){
+    x++;
+    if (x==0){
+      goto reenviaCancelamento;
+    }
+  }
+
+  if (Serial.available()){
+    serialInput = Serial.readStringUntil('#');
+    serialInput = "";
+    compraId = "";
+    precoCompra = "";
+    tecla = 255;
+    telaInicio();
   }
 }
 
-void imprimirInformacoesProduto(unsigned char tela){ //0 =consultar/ 1=comprar
-  if(tela==0){
-    GLCD.print("Nome", CENTER, 48);
-  }else{
-    GLCD.print("Nome", 4, 10);
+void concluirCompra(){
+reenviaConcluir:
+  Serial.write("3|");
+  Serial.write(compraId.c_str());
+  Serial.write("#");
+  long int x = 1;
+  while(!Serial.available()){
+    x++;
+    if (x==0){
+      goto reenviaConcluir;
+    }
   }
-}
 
-void verificarSerialCompra(){
-  
+  if (Serial.available()){
+    serialInput = Serial.readStringUntil('#');
+    serialInput = "";
+    compraId = "";
+    precoCompra = "";
+    tecla = 255;
+    telaInicio();
+  }
 }
 
 void telaInicio(){
@@ -251,7 +387,7 @@ void limpaTela(){
   GLCD.fillScr(249, 249, 249);
 }
 
-void telaConsultar(){
+void telaConsultar(boolean inicio){
   GLCD.fillScr(249, 249, 249);
   drawCabecalho();
   GLCD.setColor(255, 215, 64);
@@ -260,15 +396,18 @@ void telaConsultar(){
   GLCD.setBackColor(249, 215, 64);
   GLCD.print("Consultar", 4, 48);
   GLCD.setBackColor(249, 249, 249);
-  GLCD.print("Aproxime", CENTER, 104);
-  GLCD.print("o", CENTER, 122);
-  GLCD.print("produto", CENTER, 140);
-  GLCD.print("...", CENTER, 156);
-  GLCD.drawRect(80, 96, 240, 180);
+  if (inicio) {
+    GLCD.print("Aproxime", CENTER, 104);
+    GLCD.print("o", CENTER, 122);
+    GLCD.print("produto", CENTER, 140);
+    GLCD.print("...", CENTER, 156);
+    GLCD.drawRect(80, 96, 240, 180);
+  }
   GLCD.drawBitmap(5, 198, 99, 38, btn_voltar);
 }
 
-void telaComprar(){
+void telaComprar(boolean inicio){
+  GLCD.setFont(BigFont);
   GLCD.fillScr(249, 249, 249);
   drawCabecalho();
   GLCD.setColor(255, 215, 64);
@@ -277,21 +416,18 @@ void telaComprar(){
   GLCD.setBackColor(249, 215, 64);
   GLCD.print("Comprar", 10, 48);
   GLCD.setBackColor(249, 249, 249);
+
   GLCD.print("Aproxime", 10, 104);
   GLCD.print("o", 44, 122);
   GLCD.print("produto", 10, 140);
   GLCD.print("...", 40, 156);
   GLCD.drawRect(4, 96, 142, 180);
-  GLCD.drawBitmap(5, 198, 99, 38, btn_voltar);
 
-  GLCD.setFont(BigFont);
-  GLCD.print("Ultimo ", 156, 94);
-  GLCD.setFont(SmallFont);
-  GLCD.print("Omo Multiacao", 156, 114);
-  GLCD.setFont(BigFont);
-  GLCD.print("Total", 156, 148);
-  GLCD.setColor(244, 10, 0);
-  GLCD.print("R$1000,00", 156, 170);
-  GLCD.drawBitmap(200, 198, 114, 39, btn_concluir);
+  GLCD.drawBitmap(5, 198, 99, 38, btn_voltar);
+  if (!inicio) {
+    GLCD.print("Ultimo ", 156, 94);
+    GLCD.setFont(BigFont);
+    GLCD.print("Total", 156, 148);
+  }
 }
 

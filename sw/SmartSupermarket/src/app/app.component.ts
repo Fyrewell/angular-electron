@@ -13,7 +13,7 @@ export class AppComponent {
   title = `App works !`;
 
   navLinks = [
-    { label: 'INICIO', path: '/inicial', icon: '' },
+    { label: 'INÍCIO', path: '/inicial', icon: 'home' },
     { label: 'PRODUTOS', path: '/produtos', icon: 'shopping_basket' },
     { label: 'TAGS', path: '/tags', icon: 'local_offer' },
     { label: 'COMPRAS', path: '/compras', icon: 'shopping_cart' },

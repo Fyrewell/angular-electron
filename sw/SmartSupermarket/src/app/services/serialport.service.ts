@@ -51,19 +51,10 @@ export class SerialPortService {
     });
   }
 
-  carregandoTopic() {
-    return Observable.create((observer) => {
-      this.carregandoObs = observer;
-      this.carregandoObs.next(false);
-    });
-  }
-
   enviar(dados: any) {
-    this.carregandoObs.next(true);
     this.arduinoPort.write(dados, (err) => {
       console.log(err);
       this.gravarLog(new Date().toLocaleString(), ''+dados, 1);
-      this.carregandoObs.next(false);
     });
   }
 
@@ -91,7 +82,6 @@ export class SerialPortService {
       });
     }else if (dados[0] == '1'){ //comprar
       var arrDados = dados.substring(2).split('|');
-      console.log(arrDados);
       if (arrDados[1]){ //compra ja iniciada
         let uuid = arrDados[0];
         let compra_id = arrDados[1];
@@ -110,7 +100,9 @@ export class SerialPortService {
                         preco += +item.preco;
                       }
                     }
-                    this.indexedDb.update('compras', {id:+compra_id,preco:preco,data:new Date().toLocaleString()}).then((res) => {
+                    preco = parseFloat(preco.toFixed(2));
+                    let compra = {id:+compra_id,preco:preco,data:new Date().toLocaleString(),status:'Em andamento'};
+                    this.indexedDb.update('compras', compra).then((res) => {
                       console.log('Compra atualizada com sucesso!');
                       this.enviar('1|'+produto.id+'-'+produto.nome+'|R$'+parseFloat(produto.preco).toFixed(2)+'|'+compra_id+'|R$'+parseFloat(preco+'').toFixed(2)+'#');
                     }, (error) => {
@@ -123,11 +115,11 @@ export class SerialPortService {
                     console.log(error);
                 });
               }else{
-                this.enviar('2|'+uuid+'|tag nao encontrada#');
+                this.enviar('2|'+uuid+'|tag nao encontrada|'+compra_id+'#');
               }
             });
           }else{
-            this.enviar('2|'+uuid+'|tag nao encontrada#');
+            this.enviar('2|'+uuid+'|tag nao encontrada|'+compra_id+'#');
           }
         });
       }else{ //primeiro produto
@@ -137,7 +129,8 @@ export class SerialPortService {
             let prod_id = tag.prod_id;
             this.indexedDb.getByKey('produtos', prod_id).then((produto)=>{
               if (produto) {
-                this.indexedDb.add('compras', {data:new Date().toLocaleString(), preco:produto.preco}).then((res) => {
+                let compra = {data:new Date().toLocaleString(),preco:produto.preco,status:'Em andamento'};
+                this.indexedDb.add('compras', compra).then((res) => {
                   console.log('Compra inserida com sucesso!');
                   let compra_id = res.key;
                   let itemCompra = {id_compra:res.key, preco:produto.preco, id_produto: produto.id};
@@ -161,8 +154,52 @@ export class SerialPortService {
 
       }
 
-    }else{ //cancelar compra
-
+    }else if(dados[0] == '3'){ //concluir compra
+      var arrDados = dados.substring(2).split('|');
+      let compra_id = arrDados[0];
+      this.indexedDb.getAll('itemCompra').then((itensCompra) => {
+        let preco = 0;
+        for (let item of itensCompra) {
+          if (compra_id==item.id_compra) {
+            preco += +item.preco;
+          }
+        }
+        preco = parseFloat(preco.toFixed(2));
+        let compra = {id:+compra_id,preco:preco,data:new Date().toLocaleString(),status:'Concluida'};
+        this.indexedDb.update('compras', compra).then((res) => {
+          console.log('Compra atualizada com sucesso!');
+          if (compra){
+            this.enviar('3|'+compra_id+'|R$'+parseFloat(preco+'').toFixed(2)+'#');
+          }else{
+            this.enviar('2|'+compra_id+'|compra nao encontrada|#');
+          }
+        }, (error) => {
+            console.log(error);
+        });
+      });
+    }else if(dados[0] == '4'){ //cancelar compra
+      var arrDados = dados.substring(2).split('|');
+      let compra_id = arrDados[0];
+      this.indexedDb.getAll('itemCompra').then((itensCompra) => {
+        let preco = 0;
+        for (let item of itensCompra) {
+          if (compra_id==item.id_compra) {
+            preco += +item.preco;
+          }
+        }
+        preco = parseFloat(preco.toFixed(2));
+        let compra = {id:+compra_id,preco:preco,data:new Date().toLocaleString(),status:'Cancelada'};
+        this.indexedDb.update('compras', compra).then((res) => {
+          console.log('Compra atualizada com sucesso!');
+          if (compra){
+            this.enviar('4|'+compra_id+'|R$'+parseFloat(preco+'').toFixed(2)+'#');
+          }else{
+            this.enviar('2|'+compra_id+'|compra nao encontrada|#');
+          }
+        }, (error) => {
+            console.log(error);
+        });
+      });
     }
   }
 

@@ -23,6 +23,7 @@ export function IndexedDbFactory() {
         'compras', { keyPath: "id", autoIncrement: true });
     objectStoreCompras.createIndex("data", "data", { unique: false });
     objectStoreCompras.createIndex("preco", "preco", { unique: false });
+    objectStoreCompras.createIndex("status", "status", { unique: false });
 
     //itemcompras
     let objectStoreItemCompra = evt.currentTarget.result.createObjectStore(

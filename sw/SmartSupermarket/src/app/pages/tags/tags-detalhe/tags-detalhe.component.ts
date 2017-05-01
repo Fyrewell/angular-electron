@@ -40,7 +40,7 @@ export class TagsDetalheComponent implements OnInit {
   }
 
   salvarTag() {
-    let tagObj = { uuid:this.uuid, prod_id:this.prod_id };
+    let tagObj = { uuid:this.uuid, prod_id:+this.prod_id };
     if (this.uuid) tagObj['uuid'] = this.uuid;
     this.indexedDb.update('tags', tagObj).then(() => {
         this.snackbar.open('Tag salva com sucesso!', 'OK', {

@@ -6,8 +6,8 @@
     <md-list-item *ngFor="let compra of compras;"
       (click)="abrirCompra(compra.id)">
       <span class="fill-remaining-space">{{compra.data}}</span>
-      <span class="fill-remaining-space">{{compra.id}}</span>
-      <span class="fill-remaining-space">R$ {{compra.preco}}</span>
+      <span class="fill-remaining-space">R${{compra.preco}}</span>
+      <span class="fill-remaining-space">{{compra.status}}</span>
       <button md-icon-button (click)="excluirCompra(compra.id)">
         <i class="material-icons">delete</i>
       </button>

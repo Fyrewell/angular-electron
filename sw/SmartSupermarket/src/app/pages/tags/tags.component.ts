@@ -26,7 +26,7 @@ export class TagsComponent implements OnInit {
     let tagsObj = [
       { uuid:'AABBCCDD', prod_id: 1 },
       { uuid:'10000000', prod_id: 2 },
-      { uuid:'AB02D1A4', prod_id: 3 },
+      { uuid:'AB02D1A3', prod_id: 3 },
       { uuid:'6AB95D68', prod_id: 3 },
     ];
     for (let tag of tagsObj) {
