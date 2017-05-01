@@ -17,6 +17,7 @@ import { MaterialModule, MdSnackBar } from '@angular/material';
 import { IndexedDbService } from './services/indexed-db.service';
 import { IndexedDbFactory } from './services/indexed-db.factory';
 import { SerialPortService } from './services/serialport.service';
+import { IpcHandlerService } from './services/ipc-handler.service';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { SerialPortService } from './services/serialport.service';
   providers: [
     {provide: IndexedDbService, useFactory: IndexedDbFactory},
     MdSnackBar,
-    SerialPortService
+    SerialPortService,
+    IpcHandlerService
   ],
   bootstrap: [AppComponent]
 })

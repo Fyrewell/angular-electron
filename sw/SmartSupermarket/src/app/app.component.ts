@@ -3,6 +3,7 @@ import { ipcRenderer } from 'electron';
 import * as childProcess from 'child_process';
 import { SerialPortService } from './services/serialport.service';
 import { IndexedDbService } from './services/indexed-db.service';
+import { IpcHandlerService } from './services/ipc-handler.service';
 
 @Component({
   selector: 'app-root',
@@ -21,17 +22,12 @@ export class AppComponent {
   ];
 
   constructor(public serialPortService: SerialPortService,
-    public indexedDb: IndexedDbService) {
+    public indexedDb: IndexedDbService, ipcHanderService: IpcHandlerService) {
 
     // Check if electron is correctly injected (see externals in webpack.config.js)
     console.log('c', ipcRenderer);
     // Check if nodeJs childProcess is correctly injected (see externals in webpack.config.js)
     console.log('c', childProcess);
-
-    ipcRenderer.on('request', function (req, port) {
-        console.log(req, port);
-        req.sender.send('response', 'FUCK YEAH#')
-    });
 
   }
 }
