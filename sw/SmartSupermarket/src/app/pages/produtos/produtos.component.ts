@@ -39,7 +39,7 @@ export class ProdutosComponent implements OnInit {
   }
 
   getAllProdutos() {
-    this.indexedDb.getAll('produtos').then((produtos) => {
+    this.indexedDb.getAll('produtos',null,{indexName:'id',order:'desc'}).then((produtos) => {
       this.produtos = produtos;
     }, (error) => {
         console.log(error);

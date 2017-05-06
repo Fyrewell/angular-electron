@@ -59,7 +59,7 @@ void setup()
 
   SPI.begin();
 
-  //nfc.begin();
+  nfc.begin();
 
   GLCD.InitLCD();
   GLCD.clrScr();
@@ -168,8 +168,8 @@ void esperaSoltarBotao(){
 }
 
 void leituraMRFC(String operacao){
-  /*byte status;
-  byte data[MAX_LEN];
+  byte status;
+  byte data[10];
   byte serial[5];
   int i, j, pos;
   String conteudo= "";
@@ -177,8 +177,8 @@ void leituraMRFC(String operacao){
   status = nfc.requestTag(MF1_REQIDL, data);
 
   if (status == MI_OK) {
-    Serial.println();
-    Serial.println("Tag detected.");
+    //Serial.println();
+    //Serial.println("Tag detected.");
   
   
     status = nfc.antiCollision(data);
@@ -200,12 +200,9 @@ void leituraMRFC(String operacao){
     nfc.haltTag();
   
     conteudo.toUpperCase();  
-    */
-    //Tag = conteudo; 
-    Tag = "AB02D1A4";
-    //GLCD.print("Tag lida: " + Tag, 10, 60);
-    //Tag.replace(" ", "%20");
-    //GLCD.print("Enviando... ", 10, 80);
+    
+    Tag = conteudo; 
+    //Tag = "AB02D1A4";
 
 reenvia:
     operacao += "|";
@@ -230,7 +227,7 @@ reenvia:
       imprimirInformacoesProduto(operacao, serialInput);
       serialInput = "";
     }
-  //}
+  }
 }
 
 void imprimirInformacoesProduto(String operacao, String serialInput){ //0 =consultar/ 1=comprar

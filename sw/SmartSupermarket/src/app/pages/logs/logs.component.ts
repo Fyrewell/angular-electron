@@ -22,7 +22,7 @@ export class LogsComponent implements OnInit {
   }
 
   getLogSerial() {
-    this.indexedDb.getAll('logSerial').then((log) => {
+    this.indexedDb.getAll('logSerial',null,{indexName:'id',order:'desc'}).then((log) => {
       this.logSerial = log;
       console.log(log);
     }, (error) => {
@@ -31,7 +31,7 @@ export class LogsComponent implements OnInit {
   }
 
   getLogServer() {
-    this.indexedDb.getAll('logServer').then((log) => {
+    this.indexedDb.getAll('logServer',null,{indexName:'id',order:'desc'}).then((log) => {
       this.logServer = log;
     }, (error) => {
         console.log(error);

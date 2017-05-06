@@ -40,7 +40,7 @@ export class ComprasComponent implements OnInit {
   }
 
   getAllCompras() {
-    this.indexedDb.getAll('compras').then((compras) => {
+    this.indexedDb.getAll('compras',null,{indexName:'id',order:'desc'}).then((compras) => {
       console.log(compras);
       this.compras = compras;
     }, (error) => {
